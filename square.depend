@@ -1,0 +1,6 @@
+# depslib dependency file v1.0
+1644196423 source:e:\code blocks\-------------------\square\main.cpp
+	<iostream>
+	<windows.h>
+	<conio.h>
+
