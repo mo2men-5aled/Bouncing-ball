@@ -2,6 +2,10 @@
 #include <windows.h>
 #include <conio.h>
 
+//directions
+#define Key_left 77
+#define Key_right 75
+
 using namespace std;
 
 class roller
@@ -36,6 +40,11 @@ public:
         return roller_j;
     }
 
+    int getwidth()
+    {
+        return width;
+    }
+
     //return roller location on the map
     int draw(int i,int j)
     {
@@ -46,12 +55,22 @@ public:
     void move_roller()
     {
         //check if any key pressed
-        if (_kbhit())
+        if (kbhit())
         {
-            if((getch()=='d')&&((roller_j+4)<width-1))
-            roller_j++;
-            else if((getch()=='a')&&(roller_j>1))
-            roller_j--;
+
+            switch (getch())
+            {
+            case Key_left:
+                roller_j++;
+                break;
+            case Key_right:
+                roller_j--;
+                break;
+            }
+            //if((getch()=='d')&&((roller_j+4)<width-1))
+            //roller_j++;
+            //else if((getch()=='a')&&(roller_j>1))
+           //roller_j--;
         }
     }
 };
@@ -67,7 +86,6 @@ private:
 
     int length;
     int width;
-
 
 public:
     ball(int BallI,int BallJ, int length, int width)
@@ -99,8 +117,7 @@ public:
         (flag_i==true)?ball_i++:ball_i--;
         (flag_j==true)?ball_j++:ball_j--;
 
-
-        if((this->ball_i<=1)||(this->ball_i>=length-1)||(((this->ball_i==(reflect.getrol_i()-1))||(this->ball_i==(reflect.getrol_i()+1)))&&((ball_j==(reflect.getrol_j()))||(ball_j==(reflect.getrol_j()+1))||(ball_j==(reflect.getrol_j()+2))||(ball_j==(reflect.getrol_j()+3))||(ball_j==(reflect.getrol_j()+4)) ) ))
+        if((this->ball_i<=1)||(this->ball_i>=length-1)||(((this->ball_i==(reflect.getrol_i()-1))||(this->ball_i==(reflect.getrol_i()+1)))&&((ball_j==(reflect.getrol_j()))||(ball_j==(reflect.getrol_j()+1))||(ball_j==(reflect.getrol_j()+2))||(ball_j==(reflect.getrol_j()+3))||(ball_j==(reflect.getrol_j()+4)))))
         {
             flag_i^=1;
         }
@@ -110,6 +127,51 @@ public:
             flag_j^=1;
         }
     }
+};
+
+class point
+{
+private:
+    int point_i=5;
+    int point_j=6;
+    int score=0;
+public:
+    void setPoint_i(int x)
+    {
+        point_i=x;
+    }
+
+    void setPoint_j(int b)
+    {
+        point_j=b;
+    }
+
+    int getPoint_i()
+    {
+        return point_i;
+    }
+
+    int getPoint_j()
+    {
+        return point_j;
+    }
+
+    int getScore()
+    {
+        return score;
+    }
+
+    void remove_point(ball inst_ball)
+    {
+        if(getPoint_i()==inst_ball.getBALLi()&&getPoint_j()==inst_ball.getBALLj())
+        {
+            setPoint_i(0);
+            setPoint_j(0);
+            score++;
+        }
+        cout<<"Score :"<<getScore()<<endl;
+    }
+
 };
 
 class mapa
@@ -139,7 +201,8 @@ public:
     }
 
     //draw borders and roller and ball
-    void draw(ball ball_inst,roller rol_inst){
+    void draw(ball ball_inst,roller rol_inst , point point_inst)
+    {
         for (int i=0;i<=this->getLength();i++)
         {
             for(int j=0;j<=this->getWidth();j++)
@@ -147,10 +210,10 @@ public:
                 if(this->draw_border(i,j)||  ball_inst.draw_ball(i,j)||rol_inst.draw(i,j))
                     cout<<"*";
 
-                else if(((i>1)&&(i<=5))&&((j>1)&&(j<getWidth()-1)))
-                    cout<<"O";
-
-
+                else if (point_inst.getPoint_i()==i&&point_inst.getPoint_j()==j)
+                {
+                    cout<<"o";
+                }
                 else
                     cout<<" ";
             }
@@ -167,6 +230,7 @@ public:
 
 int main()
 {
+    point nodes;
     mapa border(20,40);
     ball astrisk(10,15,20,40);
     roller rol(15,10,40);
@@ -174,12 +238,13 @@ int main()
 
     while(1)
     {
-
-        border.draw(astrisk,rol);
+        border.draw(astrisk,rol,nodes);
 
         astrisk.move_ball(rol);
 
         rol.move_roller();
+
+        nodes.remove_point(astrisk);
 
         border.speed(0.1);
     }
