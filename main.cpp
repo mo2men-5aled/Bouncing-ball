@@ -2,23 +2,25 @@
 #include <windows.h>
 #include <conio.h>
 
-//directions
+//directions right and left
 #define Key_left 77
 #define Key_right 75
 
 using namespace std;
 
+class ball;
+
 class roller
 {
 
 private:
+
     int roller_i,roller_j;
     int width;
 
     bool direction_roller ;
 
 public:
-
 
     roller(int rol_i,int rol_j,int width)
     {
@@ -39,7 +41,7 @@ public:
     {
         return roller_j;
     }
-
+    //Width
     int getwidth()
     {
         return width;
@@ -57,7 +59,6 @@ public:
         //check if any key pressed
         if (kbhit())
         {
-
             switch (getch())
             {
             case Key_left:
@@ -73,6 +74,47 @@ public:
            //roller_j--;
         }
     }
+};
+
+
+
+
+class point
+{
+private:
+    int point_i=5;
+    int point_j=6;
+
+    int score=0;
+public:
+
+    void setPoint_i(int x)
+    {
+        point_i=x;
+    }
+
+    void setPoint_j(int b)
+    {
+        point_j=b;
+    }
+
+    int getPoint_i()
+    {
+        return point_i;
+    }
+
+    int getPoint_j()
+    {
+        return point_j;
+    }
+
+    int getScore()
+    {
+        return score;
+    }
+
+    void remove_point(ball inst_ball);
+
 };
 
 class ball
@@ -112,7 +154,7 @@ public:
     }
 
     //ball movement and reflection
-    void move_ball(roller reflect)
+    void move_ball(roller reflect,point inst_point)
     {
         (flag_i==true)?ball_i++:ball_i--;
         (flag_j==true)?ball_j++:ball_j--;
@@ -126,42 +168,21 @@ public:
         {
             flag_j^=1;
         }
+
+        else if (((flag_i==1)||(flag_i==0))&&((inst_point.getPoint_i()==getBALLi())&&(inst_point.getPoint_j()==getBALLj())))
+        {
+            flag_i^=1;
+        }
+        else if (((flag_j==1)||(flag_j==0))&&((inst_point.getPoint_i()==getBALLi())&&(inst_point.getPoint_j()==getBALLj())))
+        {
+            flag_j^=1;
+        }
+
     }
 };
 
-class point
-{
-private:
-    int point_i=5;
-    int point_j=6;
-    int score=0;
-public:
-    void setPoint_i(int x)
-    {
-        point_i=x;
-    }
-
-    void setPoint_j(int b)
-    {
-        point_j=b;
-    }
-
-    int getPoint_i()
-    {
-        return point_i;
-    }
-
-    int getPoint_j()
-    {
-        return point_j;
-    }
-
-    int getScore()
-    {
-        return score;
-    }
-
-    void remove_point(ball inst_ball)
+    //check if the ball hit the node and delete it
+    void point::remove_point(ball inst_ball)
     {
         if(getPoint_i()==inst_ball.getBALLi()&&getPoint_j()==inst_ball.getBALLj())
         {
@@ -172,8 +193,6 @@ public:
         cout<<"Score :"<<getScore()<<endl;
     }
 
-};
-
 class mapa
 {
 
@@ -181,7 +200,6 @@ private:
 
     //drawing borders
     int width, length;
-
 
 public:
     mapa(int l, int w)
@@ -228,6 +246,9 @@ public:
     }
 };
 
+
+
+
 int main()
 {
     point nodes;
@@ -240,7 +261,7 @@ int main()
     {
         border.draw(astrisk,rol,nodes);
 
-        astrisk.move_ball(rol);
+        astrisk.move_ball(rol,nodes);
 
         rol.move_roller();
 
